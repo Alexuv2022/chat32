@@ -26,7 +26,7 @@ public class Server {
                             while (true) {
                                 String message = user.getIs().readUTF();
                                 for (User user1 : users) {
-                                    if (!(user.getUuid().equals(user1.getUuid()))) {
+                                    if (!(user.getUuid().toString().equals(user1.getUuid()))) {
                                         user1.getOut().writeUTF(user.getName() + ": " + message);
                                     }
                                 }
