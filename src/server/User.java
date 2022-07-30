@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class User {
@@ -38,6 +39,23 @@ public class User {
 
     public DataOutputStream getOut() {
         return out;
+    }
+
+    public static void whoIsOnline(ArrayList<User> users) {
+
+        for (User userInUsers: users) {
+            String whoIsOnLine = "";
+            for (User userOnLine: users) {
+                if (!(userInUsers.getUuid().toString().equals(userOnLine.getUuid().toString()))) {
+                    whoIsOnLine += userOnLine.getName() + "\n";
+                }
+            }
+            try {
+                userInUsers.getOut().writeUTF(whoIsOnLine + "# is online");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
 /*

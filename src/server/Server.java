@@ -13,31 +13,35 @@ public class Server {
             System.out.println("Сервер запущен");
             while (true) {
                 Socket socket = serverSocket.accept();
-                User user = new User(socket);
-                users.add(user);
+                User currentUser = new User(socket);
+                users.add(currentUser);
                 System.out.println("Клиент подключился");
-                System.out.println(user.getUuid());
+                System.out.println(currentUser.getUuid());
+                User.whoIsOnline(users);
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            user.getOut().writeUTF("Введите имя");
-                            user.setName(user.getIs().readUTF());
+                            currentUser.getOut().writeUTF("Введите имя");
+                            currentUser.setName(currentUser.getIs().readUTF());
+                            User.whoIsOnline(users);
                             while (true) {
-                                String message = user.getIs().readUTF();
+                                String message = currentUser.getIs().readUTF();
                                 for (User user1 : users) {
-                                    if (!(user.getUuid().toString().equals(user1.getUuid().toString()))) {
-                                        user1.getOut().writeUTF(user.getName() + ": " + message);
+                                    if (!(currentUser.getUuid().toString().equals(user1.getUuid().toString()))) {
+                                        user1.getOut().writeUTF(currentUser.getName() + ": " + message);
+
                                     }
                                 }
-                                System.out.println(user.getUuid() + ": " + message);
+                                System.out.println(currentUser.getUuid() + ": " + message);
                             }
                         } catch (IOException e) {
-                            users.remove(user);
-                            System.out.println(user.getUuid() + " отключился");
+                            users.remove(currentUser);
+                            System.out.println(currentUser.getUuid() + " отключился");
+                            User.whoIsOnline(users);
                             for (User user1 : users) {
                                 try {
-                                    user1.getOut().writeUTF(user.getName() + " отключился");
+                                    user1.getOut().writeUTF(currentUser.getName() + " отключился");
                                 } catch (IOException ex) {
                                     ex.printStackTrace();
                                 }
